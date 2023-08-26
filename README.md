@@ -56,6 +56,7 @@ Create an invite URL using your bot's client ID:
 
 ```
 https://discord.com/oauth2/authorize?client_id=YOUR_CLIENT_ID_HERE&scope=bot&permissions=YOUR_PERMISSIONS_INTEGER
+https://discord.com/api/oauth2/authorize?client_id=1144616319908585654&permissions=2147585024&scope=bot%20applications.commands
 ```
 
 Replace YOUR_CLIENT_ID_HERE and YOUR_PERMISSIONS_INTEGER with appropriate values.

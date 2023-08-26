@@ -10,7 +10,7 @@ import aiohttp
 from io import BytesIO
 
 # Constants
-MIDJOURNEY_BOT_ID = "None"  # Replace with the actual bot's user ID
+MIDJOURNEY_BOT_ID = "None"  # This gets automatically replaced with the mj bot's user ID
 
 # AWS S3 Configuration
 s3_client = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
@@ -23,25 +23,34 @@ intents.message_content = True
 intents.messages = True
 intents.members = True
 
-class PhotoView(View):
+class imageView(View):
     def __init__(self, files):
         super().__init__()
         for file in files:
-            self.add_item(PhotoButton(label=file['Key'], custom_id=file['Key']))
+            self.add_item(imageButton(label=file['Key'], custom_id=file['Key']))
 
 
-class PhotoButton(Button):
+class imageButton(Button):
     async def callback(self, interaction: discord.Interaction):
         filename = self.custom_id
-        file_path = f'{filename}'
+        file_path = f'./tmp/{filename}'
         try:
-            s3_client.download_file(s3_bucket, filename, file_path)
+            
+            # Create the platform-independent path for the directory and ensure it exists
+            directory_path = f"./tmp/{s3_path}"
+            if not os.path.exists(directory_path):
+                os.makedirs(directory_path)
+            
+            s3_full_path = f"{filename}"
+            print(s3_full_path)
+            print(file_path)
+            s3_client.download_file(s3_bucket, s3_full_path, file_path)
             with open(file_path, 'rb') as img:
                 await interaction.response.send_message(f"File Name: **{filename}**", file=discord.File(img, filename))
         except Exception as e:
-            await interaction.response.send_message(f'Error fetching the photo: {str(e)}')
+            await interaction.response.send_message(f'Error fetching the image: {str(e)}')
 
-
+# Upload an image to s3 via async streaming
 async def stream_to_s3(url, s3_full_path):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -93,11 +102,7 @@ class MyBot(commands.Bot):
         view = UploadView(message.channel)
         await message.channel.send('Would you like to upload the last image?', view=view)
 
-
-
 bot = MyBot(command_prefix='!', help_command=CustomHelpCommand(), intents=intents)
-
-
 
 
 # Upload View
@@ -125,18 +130,8 @@ class UploadView(View):
                 last_image = message.attachments[0]
                 break
 
-        """         
-        async for message in self.channel.history(limit=10):  # Search the last 10 messages
-            if message.attachments:
-                last_image = message.attachments[0]
-                print(last_image)
-                break """
-
         if last_image:
-            #file_path = f'{last_image.filename}'
-            #await last_image.save(file_path)
             
-            #s3_client.upload_file(last_image, s3_bucket, f'{s3_path}/{last_image.filename}', ExtraArgs={'Metadata': image_metadata})
             try:
             # Generate a filename based on current time
                 await interaction.response.defer()
@@ -144,7 +139,8 @@ class UploadView(View):
                 current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
                 # Assuming .jpg extension for simplicity; can be enhanced
                 image_name = f'{current_time}.jpg'
-                s3_full_path = os.path.join(s3_path, image_name)
+                #s3_full_path = os.path.join(s3_path, image_name)
+                s3_full_path = f"{s3_path}/{image_name}"
                 await stream_to_s3(f'{last_image}', s3_full_path)
                 await interaction.followup.send(f'Image uploaded as {s3_full_path} in the bucket {s3_bucket}!')
                 
@@ -170,7 +166,7 @@ async def upload(ctx, image_name_or_link: str = None):
             current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
             # Assuming .jpg extension for simplicity; can be enhanced
             image_name = f'{current_time}.jpg'
-            s3_full_path = os.path.join(s3_path, image_name)
+            s3_full_path = f"{s3_path}/{image_name}"
             await stream_to_s3(image_name_or_link, s3_full_path)
             await ctx.send(f'Image uploaded as {s3_full_path} in the bucket {s3_bucket}!')
         except Exception as e:
@@ -190,7 +186,8 @@ async def upload(ctx, image_name_or_link: str = None):
         
         # Upload to S3
         try:
-            s3_full_path = os.path.join(s3_path, image_name_or_link)
+            #s3_full_path = os.path.join(s3_path, image_name_or_link)
+            s3_full_path = f"{s3_path}/{image_name_or_link}"
             s3_client.upload_file(file_path, s3_bucket, s3_full_path, ExtraArgs={'Metadata': image_metadata})
             await ctx.send(f'Image uploaded as {s3_full_path} in the bucket {s3_bucket}!')
         except Exception as e:
@@ -227,6 +224,15 @@ async def bucket(ctx):
     else:
         await ctx.send('No S3 bucket or path has been set.')
 
+@bot.command(name='path', help='Display the current S3 path(if available).')
+async def bucket(ctx):
+    global s3_bucket, s3_path
+    if s3_bucket and s3_path:
+        await ctx.send(f'Current S3 location is: {s3_bucket}/{s3_path}')
+    elif s3_bucket:
+        await ctx.send(f'Current S3 bucket is: {s3_bucket}, path is empty')
+    else:
+        await ctx.send('No S3 bucket or path has been set.')
 
 @bot.command(name='set_metadata', help='Set metadata for an image: !set_metadata <key> <value>')
 async def set_metadata(ctx, key: str, value: str):
@@ -234,20 +240,15 @@ async def set_metadata(ctx, key: str, value: str):
     image_metadata[key] = value
     await ctx.send(f'Metadata set: {key} = {value}')
 
-@bot.command(name='upload_prompt', help='Prompt to upload an image.')
-async def upload_prompt(ctx):
-    embed = Embed(title="Upload an Image", description="Please attach an image and use the `!upload` command to upload it.")
-    await ctx.send(embed=embed)
-
-@bot.command(name='config_aws')
+@bot.command(name='config_aws', help='Set AWS credentials. Usage: !set_aws <access_key_id> <secret_access_key>')
 @commands.is_owner()  # Restrict this command to the bot owner
 async def config_aws(ctx, access_key_id: str, secret_access_key: str):
     os.environ['AWS_ACCESS_KEY_ID'] = access_key_id
     os.environ['AWS_SECRET_ACCESS_KEY'] = secret_access_key
     await ctx.send('AWS credentials configured.')
 
-@bot.command(name='list_photos', help='List all photos in the S3 bucket')
-async def list_photos(ctx):
+@bot.command(name='list_images', help='List all images in the S3 bucket')
+async def list_images(ctx):
     # Check if bucket is set
     if not s3_bucket:
         await ctx.send('Please set the S3 bucket first using !set_bucket')
@@ -256,45 +257,55 @@ async def list_photos(ctx):
     # Fetch the list of objects in the bucket
     objects = s3_client.list_objects_v2(Bucket=s3_bucket)
     
-    # Filter for photos (assuming JPEG and PNG for simplicity)
-    photo_files = [obj['Key'] for obj in objects.get('Contents', []) if obj['Key'].endswith(('.jpg', '.jpeg', '.png'))]
+    # Filter for images (assuming JPEG and PNG for simplicity)
+    image_files = [obj['Key'] for obj in objects.get('Contents', []) if obj['Key'].endswith(('.jpg', '.jpeg', '.png'))]
     
-    if not photo_files:
-        await ctx.send('No photos found in the bucket.')
+    if not image_files:
+        await ctx.send('No images found in the bucket.')
         return
 
-    # Send the list of photos to the channel
-    photos_list = '\n'.join(photo_files)
-    await ctx.send(f"Photos in the bucket:\n{photos_list}")
+    # Send the list of images to the channel
+    images_list = '\n'.join(image_files)
+    await ctx.send(f"images in the bucket:\n{images_list}")
 
-@bot.command(name='git_photo', help='Get a specific photo from the S3 bucket or the most recent one if no filename provided. Usage: !get_photo <filename>')
-async def git_photo(ctx, filename: str = None):
+@bot.command(name='get_image', help='Choose an image from the current location to download. Usage: !get_image <filename>')
+async def get_image(ctx, filename: str = None):
     # Check if bucket is set
     if not s3_bucket:
         await ctx.send('Please set the S3 bucket first using !set_bucket')
         return
 
     if filename is None:  # If no filename is provided
-        objects = s3_client.list_objects_v2(Bucket=s3_bucket)
-        photo_files = [obj for obj in objects['Contents'] if isinstance(obj, dict) and obj.get('Key').endswith(('.jpg', '.jpeg', '.png'))]
-        sorted_files = sorted(photo_files, key=lambda x: x.get('LastModified', ''), reverse=True)[:10]
+        objects = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=s3_path)
+        image_files = [obj for obj in objects['Contents'] if isinstance(obj, dict) and obj.get('Key').endswith(('.jpg', '.jpeg', '.png'))]
+        sorted_files = sorted(image_files, key=lambda x: x.get('LastModified', ''), reverse=True)[:10]
         if not sorted_files:
-            await ctx.send('No photos found in the bucket.')
+            await ctx.send('No images found in the bucket.')
             return
-        view = PhotoView(sorted_files)
-        await ctx.send('Select a photo:', view=view)
+        view = imageView(sorted_files)
+        await ctx.send('Select a image:', view=view)
     else:
-        file_path = f'/tmp/{filename}'
+
+        # Create the platform-independent path for the directory and ensure it exists
+        directory_path = f"./{s3_path}"
+        if not os.path.exists(directory_path):
+            print('making '+ directory_path)
+            os.makedirs(directory_path)
+
+
+        file_path = f"{directory_path}/{filename}"
+        #full_s3_path = os.path.join(s3_path, filename)
+        s3_full_path = f"{s3_path}/{filename}"
         try:
-            s3_client.download_file(s3_bucket, filename, file_path)
+            s3_client.download_file(s3_bucket, s3_full_path, file_path)
             with open(file_path, 'rb') as img:
                 await ctx.send(f"File Name: **{filename}**", file=discord.File(img, filename))
         except Exception as e:
-            await ctx.send(f'Error fetching the photo: {str(e)}')
+            await ctx.send(f'Error fetching the image: {str(e)}')
 
 
-@bot.command(name='get_photo', help='Get a specific photo from the S3 bucket or the most recent one if no filename provided. Usage: !get_photo <filename>')
-async def get_photo(ctx, filename: str = None):
+""" @bot.command(name='get_image', help='Get a specific image from the S3 bucket or the most recent one if no filename provided. Usage: !get_image <filename>')
+async def get_image(ctx, filename: str = None):
     # Check if bucket is set
     if not s3_bucket:
         await ctx.send('Please set the S3 bucket first using !set_bucket')
@@ -304,18 +315,18 @@ async def get_photo(ctx, filename: str = None):
         # Fetch all objects from the bucket
         objects = s3_client.list_objects_v2(Bucket=s3_bucket)
         
-        # Filter for photos (assuming JPEG and PNG for simplicity)
-        photo_files = [obj for obj in objects.get('Contents', []) if obj['Key'].endswith(('.jpg', '.jpeg', '.png'))]
+        # Filter for images (assuming JPEG and PNG for simplicity)
+        image_files = [obj for obj in objects.get('Contents', []) if obj['Key'].endswith(('.jpg', '.jpeg', '.png'))]
         
         # Sort the files by their last modified timestamp in descending order
-        sorted_files = sorted(photo_files, key=lambda x: x['LastModified'], reverse=True)
+        sorted_files = sorted(image_files, key=lambda x: x['LastModified'], reverse=True)
         
-        # If there are no photos, inform the user and return
+        # If there are no images, inform the user and return
         if not sorted_files:
-            await ctx.send('No photos found in the bucket.')
+            await ctx.send('No images found in the bucket.')
             return
         
-        # Set the filename to the most recently modified photo's filename
+        # Set the filename to the most recently modified image's filename
         filename = sorted_files[0]['Key']
 
         if filename.count('.') > 1:
@@ -330,15 +341,16 @@ async def get_photo(ctx, filename: str = None):
     try:
         s3_client.download_file(s3_bucket, filename, file_path)
     except Exception as e:
-        await ctx.send(f'Error fetching the photo: {str(e)}')
+        await ctx.send(f'Error fetching the image: {str(e)}')
         return
     
     # Send the image to the Discord channel
     with open(file_path, 'rb') as img:
         await ctx.send(f"File Name: **{filename}**",file=discord.File(img, sanitized_filename))
 
-
-@bot.command(name='config', help='Get a specific photo from the S3 bucket. Usage: !get_photo')
+ """
+ 
+@bot.command(name='config', help='Display current config settings for the mjartsaver bot. Usage: !config')
 @commands.is_owner()  # Restrict this command to the bot owner
 async def config(ctx):
     # Display bot token partially masked for security

@@ -37,10 +37,12 @@ Discord Bot Token
 Create a bot user in the Discord Developer Portal and obtain the bot token.
 Add your bot token value to the 'config.py' file
 
+
 ### AWS Credentials
 
 Set up AWS credentials for S3 access, either by configuring them locally or using the !config_aws command within the bot.
-Intents and Permissions
+
+### Intents and Permissions
 
 Enable the necessary intents in the Discord Developer Portal, and set the appropriate permissions when inviting the bot to your server.
 

@@ -209,7 +209,7 @@ async def set_bucket(ctx, bucket: str, path: str = ''):
     await ctx.send(f'S3 bucket and path set to {s3_bucket}/{s3_path}' if s3_path else f'S3 bucket set to {s3_bucket}')
 
 @bot.command(name='set_path', help='Set the S3 path. Usage: !set_path <path>')
-async def change_path(ctx, path: str):
+async def change_path(ctx, path: str = ""):
     global s3_path
     s3_path = path
     await ctx.send(f'S3 path set to {s3_path}')
@@ -234,20 +234,20 @@ async def bucket(ctx):
     else:
         await ctx.send('No S3 bucket or path has been set.')
 
-@bot.command(name='set_metadata', help='Set metadata for an image: !set_metadata <key> <value>')
+@bot.command(name='set_metadata', help='Set default metadata values for uploaded files: !set_metadata <key> <value>')
 async def set_metadata(ctx, key: str, value: str):
     global image_metadata
     image_metadata[key] = value
     await ctx.send(f'Metadata set: {key} = {value}')
 
-@bot.command(name='config_aws', help='Set AWS credentials. Usage: !set_aws <access_key_id> <secret_access_key>')
+@bot.command(name='set_aws', help='Set AWS credentials. Usage: !set_aws <access_key_id> <secret_access_key>')
 @commands.is_owner()  # Restrict this command to the bot owner
 async def config_aws(ctx, access_key_id: str, secret_access_key: str):
     os.environ['AWS_ACCESS_KEY_ID'] = access_key_id
     os.environ['AWS_SECRET_ACCESS_KEY'] = secret_access_key
     await ctx.send('AWS credentials configured.')
 
-@bot.command(name='list_images', help='List all images in the S3 bucket')
+@bot.command(name='list_images', help='List all images in the S3 bucket(or specific path if set)')
 async def list_images(ctx):
     # Check if bucket is set
     if not s3_bucket:
@@ -303,53 +303,6 @@ async def get_image(ctx, filename: str = None):
         except Exception as e:
             await ctx.send(f'Error fetching the image: {str(e)}')
 
-
-""" @bot.command(name='get_image', help='Get a specific image from the S3 bucket or the most recent one if no filename provided. Usage: !get_image <filename>')
-async def get_image(ctx, filename: str = None):
-    # Check if bucket is set
-    if not s3_bucket:
-        await ctx.send('Please set the S3 bucket first using !set_bucket')
-        return
-    
-    if filename is None:  # If no filename is provided
-        # Fetch all objects from the bucket
-        objects = s3_client.list_objects_v2(Bucket=s3_bucket)
-        
-        # Filter for images (assuming JPEG and PNG for simplicity)
-        image_files = [obj for obj in objects.get('Contents', []) if obj['Key'].endswith(('.jpg', '.jpeg', '.png'))]
-        
-        # Sort the files by their last modified timestamp in descending order
-        sorted_files = sorted(image_files, key=lambda x: x['LastModified'], reverse=True)
-        
-        # If there are no images, inform the user and return
-        if not sorted_files:
-            await ctx.send('No images found in the bucket.')
-            return
-        
-        # Set the filename to the most recently modified image's filename
-        filename = sorted_files[0]['Key']
-
-        if filename.count('.') > 1:
-            parts = filename.split('.')
-            sanitized_filename = '.'.join(parts[:-1]) + '.' + parts[-1]
-        else:
-            sanitized_filename = filename
- 
-    # Fetch the image from S3
-    file_path = f'{sanitized_filename}'
-
-    try:
-        s3_client.download_file(s3_bucket, filename, file_path)
-    except Exception as e:
-        await ctx.send(f'Error fetching the image: {str(e)}')
-        return
-    
-    # Send the image to the Discord channel
-    with open(file_path, 'rb') as img:
-        await ctx.send(f"File Name: **{filename}**",file=discord.File(img, sanitized_filename))
-
- """
- 
 @bot.command(name='config', help='Display current config settings for the mjartsaver bot. Usage: !config')
 @commands.is_owner()  # Restrict this command to the bot owner
 async def config(ctx):

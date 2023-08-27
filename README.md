@@ -3,7 +3,7 @@
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png" alt="Logo" width="140" height="140" style="border-radius: 50%;">
+  <a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png"><img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png" alt="Logo" width="140" height="140" style="border-radius: 50%;"></a>
 </p>
 A customizable Discord bot that streamlines the uploading of Midjourney generative AI images to secure AWS S3 buckets 
 <br>

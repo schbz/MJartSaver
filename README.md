@@ -33,7 +33,7 @@ Link your specified S3 bucket/path to other AWS services like S3 static web host
 Install Dependencies
 
 ```
-pip install discord.py boto3 aiohttp
+pip install discord.py boto3 aiohttp python-dotenv
 ```
 
 ## Configuration

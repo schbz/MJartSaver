@@ -1,5 +1,5 @@
-from config import BOT_TOKEN, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 import os
+from dotenv import load_dotenv
 import boto3
 import discord
 from discord.ext import commands
@@ -9,14 +9,26 @@ from datetime import datetime
 import aiohttp
 from io import BytesIO
 
+# Load the .env file located in the same directory
+load_dotenv()
+
+# Obtain the values using os.getenv
+IAM_USERNAME = os.getenv('IAM_USERNAME')
+ACCESS_KEY_ID = os.getenv('ACCESS_KEY_ID')
+SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+CLIENT_ID = os.getenv('CLIENT_ID')
+S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
+
+# AWS S3 Configuration
+s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=SECRET_ACCESS_KEY)
+s3_bucket = S3_BUCKET_NAME
+s3_path = ''
+image_metadata = {}
+
 # Constants
 MIDJOURNEY_BOT_ID = "None"  # This gets automatically replaced with the mj bot's user ID
 
-# AWS S3 Configuration
-s3_client = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-s3_bucket = 'mj-art-saves-2023-08-25'
-s3_path = ''
-image_metadata = {}
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -309,8 +321,8 @@ async def config(ctx):
     # Display bot token partially masked for security
     masked_bot_token = BOT_TOKEN[:5] + "..." + BOT_TOKEN[-5:]
     # Display AWS keys partially masked for security
-    masked_aws_access_key_id = AWS_ACCESS_KEY_ID[:4] + "..." + AWS_ACCESS_KEY_ID[-4:]
-    masked_aws_secret_access_key = AWS_SECRET_ACCESS_KEY[:4] + "..." + AWS_SECRET_ACCESS_KEY[-4:]
+    masked_aws_access_key_id = ACCESS_KEY_ID[:4] + "..." + ACCESS_KEY_ID[-4:]
+    masked_aws_secret_access_key = SECRET_ACCESS_KEY[:4] + "..." + SECRET_ACCESS_KEY[-4:]
     
     # Construct the message
     config_info = f"""

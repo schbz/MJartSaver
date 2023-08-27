@@ -1,12 +1,27 @@
 # Midjourney Art Saver Bot
 
+---
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png" alt="Logo" width="140" height="140" style="border-radius: 100%;">
 </p>
-[![Python Version](https://img.shields.io/badge/python-3.1-blue.svg)](https://www.python.org/downloads/release/python-311/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Issues](https://img.shields.io/github/issues/schbz/mjartsaver.svg)](https://github.com/schbz/mjartsaver/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://makeapullrequest.com)
+A customizable Discord bot that streamlines the uploading of Midjourney generative AI images to secure AWS S3 buckets 
+<br>
+<br>
+<p align="center">
+    <a href="https://www.python.org/downloads/release/python-311/">
+        <img src="https://img.shields.io/badge/python-3.1-blue.svg" alt="Python Version">
+    </a>
+    <a href="https://opensource.org/licenses/MIT">
+        <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
+    </a>
+    <a href="https://github.com/schbz/mjartsaver/issues">
+        <img src="https://img.shields.io/github/issues/schbz/mjartsaver.svg" alt="Issues">
+    </a>
+    <a href="https://makeapullrequest.com">
+        <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
+    </a>
+</p>
 
 ---
 

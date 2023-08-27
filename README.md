@@ -27,6 +27,32 @@ A customizable Discord bot that streamlines the uploading of Midjourney generati
 
 This bot is designed to interact with Midjourney generative AI users on Discord, allowing them to upload image files to their secure S3 buckets on AWS. It also includes various commands for configuration and can respond to messages from the standard "Midjourney Bot."
 
+## Table of Contents
+
+- [Midjourney Art Saver Bot](#midjourney-art-saver-bot)
+  - [Table of Contents](#table-of-contents)
+  - [Usage Examples](#usage-examples)
+  - [Features](#features)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+    - [Clone the Repository](#clone-the-repository)
+  - [Configuration](#configuration)
+    - [Discord Bot Token](#discord-bot-token)
+    - [Setup Script](#setup-script)
+      - [Setup Script Prerequisites and Usage](#setup-script-prerequisites-and-usage)
+      - [Setup Script Features](#setup-script-features)
+    - [Intents and Permissions](#intents-and-permissions)
+    - [Running the Bot Locally](#running-the-bot-locally)
+    - [Inviting the Bot to Your Server](#inviting-the-bot-to-your-server)
+  - [Usage](#usage)
+    - [Command List](#command-list)
+    - [Cleanup Script](#cleanup-script)
+      - [Cleanup Script Prerequisites and Usage](#cleanup-script-prerequisites-and-usage)
+      - [Cleanup Script Features](#cleanup-script-features)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Support](#support)
+
 ## Usage Examples
 
 - Link your specified S3 bucket/path to other AWS services like S3 static web hosting or Cloudfront distributions to allow for streamlined collaborative updating of website media and more with the latest in generative art.
@@ -66,10 +92,6 @@ pip install discord.py boto3 aiohttp python-dotenv
 
 Register a bot Application in the Discord Developer Portal and obtain the bot token.
 
-### AWS CLI
-
-Make sure you have [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed on your computer and logged in with an administrator account that has sufficient permissions.
-
 ### Setup Script
 
 `setup.sh`
@@ -78,7 +100,7 @@ This script automates several tasks required for interacting with your S3 file h
 
 ##### Setup Script Prerequisites and Usage
 
-Ensure you have the [AWS Command Line Interface (CLI)](https://aws.amazon.com/cli/) installed and correctly configured with the necessary access rights.
+Make sure you have [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed on your computer and logged in with an administrator account that has sufficient permissions.
 
 Simply run the script in your shell:
 
@@ -158,7 +180,7 @@ Replace YOUR_CLIENT_ID_HERE with the appropriate value obtained from Discord Dev
 
 ## Usage
 
-Simply enter the above invite into your browser to add your locally hosted bot to your personal server where your Midjourney bot has already been added.
+Simply enter the above invite into your browser to add the running bot to your personal server where a Midjourney bot has already been added.
 
 ### Command List
 
@@ -220,7 +242,7 @@ Below is a list of available commands and their descriptions:
 
 Each command typically begins with a `!` prefix, followed by the command name and any applicable arguments. Please refer to the provided usages for details on how to use each command.
 
-### AWS Cleanup Script
+### Cleanup Script
 
 `cleanup.sh`
 

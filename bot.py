@@ -65,7 +65,23 @@ class imageButton(Button):
             await interaction.response.send_message(f'Error fetching the image: {str(e)}')
 
 # Upload an image to s3 via async streaming
-async def stream_to_s3(url, s3_full_path):
+async def stream_to_s3(url, s3_full_path,text_prompt=None):
+    global image_metadata
+    old_metadata = image_metadata
+    if PROMPT_INCLUDE and text_prompt:
+
+        text_prompt = text_prompt.split(' - ')[0].replace("*", "").replace(" ", "-")
+
+        image_metadata['Comments'] = text_prompt
+        last_slash_index = s3_full_path.rfind('/')
+        if len(text_prompt) > 80:
+            text_prompt = text_prompt[:80]
+        if last_slash_index == -1:  # If no '/' found
+            modified_string = text_prompt + s3_full_path
+        else:
+            modified_string = s3_full_path[:last_slash_index + 1] + text_prompt + s3_full_path[last_slash_index + 1:]
+
+        print(modified_string)
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             # Check if the request was successful
@@ -76,8 +92,8 @@ async def stream_to_s3(url, s3_full_path):
             fileobj = BytesIO(await response.read())
 
             # Stream data directly to S3
-            s3_client.upload_fileobj(fileobj, s3_bucket, s3_full_path, ExtraArgs={'Metadata': image_metadata})
-
+            s3_client.upload_fileobj(fileobj, s3_bucket, modified_string, ExtraArgs={'Metadata': image_metadata})
+    image_metadata = old_metadata
 # Custom Help Command
 class CustomHelpCommand(commands.HelpCommand):
     async def send_bot_help(self, mapping):
@@ -113,8 +129,25 @@ class MyBot(commands.Bot):
         await super().on_message(message)
 
     async def handle_midjourney_bot_message(self, message):
-        view = UploadView(message.channel)
-        await message.channel.send('Would you like to upload the last image?', view=view)
+        if AUTO_UPLOAD:
+            try:
+            # Generate a filename based on current time
+                #await interaction.response.defer()
+                #await interaction.followup.send('uploading image...')
+                current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
+                # Assuming .jpg extension for simplicity; can be enhanced
+                image_name = f'{current_time}.jpg'
+                #s3_full_path = os.path.join(s3_path, image_name)
+                s3_full_path = f"{s3_path}/{image_name}"
+                await stream_to_s3(f'{message.attachments[0]}', s3_full_path, message.content)
+                await message.channel.send(f'Image {message.content[:15]} uploaded as {s3_full_path} in the bucket {s3_bucket}!')
+                
+            except Exception as e:
+                await message.channel.send(f'Error uploading the image: {str(e)}')
+            pass
+        else:
+            view = UploadView(message.channel)
+            await message.channel.send('Would you like to upload the last image?', view=view)
 
 bot = MyBot(command_prefix='!', help_command=CustomHelpCommand(), intents=intents)
 
@@ -129,6 +162,7 @@ class UploadView(View):
     async def upload_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         
         last_image = None
+        last_text = None
         
         # Get the timestamp of when the message with the button was created.
         button_message_time = interaction.message.created_at
@@ -142,6 +176,7 @@ class UploadView(View):
         for message in messages_before_button:
             if message.author.bot and message.attachments:
                 last_image = message.attachments[0]
+                last_text = message.content
                 break
 
         if last_image:
@@ -155,7 +190,7 @@ class UploadView(View):
                 image_name = f'{current_time}.jpg'
                 #s3_full_path = os.path.join(s3_path, image_name)
                 s3_full_path = f"{s3_path}/{image_name}"
-                await stream_to_s3(f'{last_image}', s3_full_path)
+                await stream_to_s3(f'{last_image}', s3_full_path, last_text)
                 await interaction.followup.send(f'Image uploaded as {s3_full_path} in the bucket {s3_bucket}!')
                 
             except Exception as e:

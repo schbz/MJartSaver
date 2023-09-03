@@ -64,7 +64,7 @@ This bot is designed to interact with Midjourney generative AI users on Discord,
 - Upload your Midjourney art to a secure S3 bucket with one click.
 - customize S3 bucket and path.
 - customize image metadata.
-- Automatically prompt users to upload each image posted with the push of a button.
+- Automatically [or optionally, prompt users to] upload each image posted with the push of a button.
 - Retrieve Previously saved images from S3.
 
 ## Prerequisites
@@ -239,8 +239,18 @@ Below is a list of available commands and their descriptions:
   - Usage: `!set_aws <access_key_id> <secret_access_key>`
 
 - **`get_image`**
+
   - Choose an image from the current location to download.
   - Usage: `!get_image <filename>`
+
+- **`toggle_auto_upload`**
+
+  - Sets config to automatically upload images or provide an upload button after each image attachment
+  - Usage: `!toggle_auto_upload`
+
+- **`toggle_prompt_include`**
+  - Sets config to include prompts in image names and metadata during upload
+  - Usage: `!toggle_prompt_include`
 
 Each command typically begins with a `!` prefix, followed by the command name and any applicable arguments. Please refer to the provided usages for details on how to use each command.
 

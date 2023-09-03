@@ -19,6 +19,8 @@ SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 CLIENT_ID = os.getenv('CLIENT_ID')
 S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
+PROMPT_INCLUDE = os.getenv('PROMPT_INCLUDE')
+AUTO_UPLOAD = os.getenv('AUTO_UPLOAD')
 
 # AWS S3 Configuration
 s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=SECRET_ACCESS_KEY)
@@ -259,6 +261,18 @@ async def config_aws(ctx, access_key_id: str, secret_access_key: str):
     os.environ['AWS_SECRET_ACCESS_KEY'] = secret_access_key
     await ctx.send('AWS credentials configured.')
 
+@bot.command(name='toggle_auto_upload', help='Toggle the AUTO_UPLOAD setting.')
+async def toggle_auto_upload(ctx):
+    global AUTO_UPLOAD
+    AUTO_UPLOAD = not AUTO_UPLOAD
+    await ctx.send(f'AUTO_UPLOAD set to {AUTO_UPLOAD}')
+
+@bot.command(name='toggle_prompt_include', help='Toggle the PROMPT_INCLUDE setting.')
+async def toggle_prompt_include(ctx):
+    global PROMPT_INCLUDE
+    PROMPT_INCLUDE = not PROMPT_INCLUDE
+    await ctx.send(f'PROMPT_INCLUDE set to {PROMPT_INCLUDE}')
+
 @bot.command(name='list_images', help='List all images in the S3 bucket(or specific path if set)')
 async def list_images(ctx):
     # Check if bucket is set
@@ -333,6 +347,8 @@ async def config(ctx):
     S3 Bucket: {s3_bucket}
     S3 Path: {s3_path}
     Image Metadata: {image_metadata}
+    Auto Upload: {AUTO_UPLOAD}
+    Include Prompt: {PROMPT_INCLUDE}
     """
     
     await ctx.send(f"```{config_info}```")

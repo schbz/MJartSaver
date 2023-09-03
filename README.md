@@ -56,6 +56,8 @@ This bot is designed to interact with Midjourney generative AI users on Discord,
 ## Usage Examples
 
 - Link your specified S3 bucket/path to other AWS services like S3 static web hosting or Cloudfront distributions to allow for streamlined collaborative updating of website media and more with the latest in generative art.
+- Use S3's low cost file storage tiers like 'Glacier' to automatically backup your generative art to an encrypted archive
+- Seamlessly transfer image files across multiple Discord servers
 
 ## Features
 

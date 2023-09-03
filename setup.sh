@@ -8,6 +8,8 @@ DEFAULT_BUCKET_NAME="mj-art-saves-$RANDOM_SUFFIX"
 POLICY_NAME="mj-art-saver-S3Policy-$DATE"
 REGION="us-east-1"
 POLICY_FILE="s3_custom_policy.json"
+AUTO_UPLOAD="True"
+PROMPT_INCLUDE="True"
 
 # Create or check for .env file
 [ -f .env ] || touch .env
@@ -34,6 +36,8 @@ SECRET_ACCESS_KEY=$(echo $ACCESS_KEY_INFO | awk '{print $2}')
 echo "IAM_USERNAME=$USERNAME" >> .env
 echo "ACCESS_KEY_ID=$ACCESS_KEY_ID" >> .env
 echo "SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY" >> .env
+echo "PROMPT_INCLUDE=$PROMPT_INCLUDE" >> .env
+echo "AUTO_UPLOAD=$AUTO_UPLOAD" >> .env
 
 # Prompt for Bot Token and Client ID
 read -p "Please enter the bot token: " BOT_TOKEN

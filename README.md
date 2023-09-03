@@ -25,7 +25,7 @@ A customizable Discord bot that streamlines the uploading of Midjourney generati
 
 ---
 
-This bot is designed to interact with Midjourney generative AI users on Discord, allowing them to upload image files to their secure S3 buckets on AWS. It also includes various commands for configuration and can respond to messages from the standard "Midjourney Bot."
+This bot is designed to interact with Midjourney generative AI users on Discord, allowing them to upload or download image files to/from their secure S3 buckets via async streaming. It also includes various commands for configuration and can respond to messages from the standard "Midjourney Bot."
 
 ## Table of Contents
 
@@ -55,14 +55,14 @@ This bot is designed to interact with Midjourney generative AI users on Discord,
 
 ## Usage Examples
 
-- Link your specified S3 bucket/path to other AWS services like S3 static web hosting or Cloudfront distributions to allow for streamlined collaborative updating of website media and more with the latest in generative art.
+- Link your specified S3 bucket/path to other services like static web hosting or Cloudfront distributions to allow for streamlined collaborative updating of website media and more with the latest in generative art.
 - Use S3's low cost file storage tiers like 'Glacier' to automatically backup your generative art to an encrypted archive
 - Seamlessly transfer image files across multiple Discord servers
 
 ## Features
 
 - Upload your Midjourney art to a secure S3 bucket with one click.
-- customize S3 bucket and path.
+- customize bucket and path location.
 - customize image metadata.
 - Automatically [or optionally, prompt users to] upload each image posted with the push of a button.
 - Retrieve Previously saved images from S3.
@@ -72,6 +72,7 @@ This bot is designed to interact with Midjourney generative AI users on Discord,
 - Python 3.1 or higher
 - Discord Developer Account
 - AWS Account with S3 access
+- AWS CLI installed and configured(required for setup script)
 
 ## Installation
 
@@ -98,7 +99,7 @@ Register a bot Application in the Discord Developer Portal and obtain the bot to
 
 `setup.sh`
 
-This script automates several tasks required for interacting with your S3 file hosting accounts, specifically creating an IAM user, generating access keys for the user, creating an S3 bucket, and applying a custom policy for S3 access.
+This script automates several tasks required for interacting with your file hosting accounts, specifically creating an IAM user, generating access keys for the user, creating an S3 bucket, and applying a custom access policy.
 
 ##### Setup Script Prerequisites and Usage
 
@@ -119,7 +120,7 @@ chmod +x setup.sh
 
    - Gets the current date and a random suffix to generate unique naming conventions.
    - Specifies default names for an IAM user, an S3 bucket, and an IAM policy.
-   - Prepares a custom S3 policy filename.
+   - Prepares a custom policy filename.
 
 2. **Environment Files Creation**
 
@@ -230,7 +231,7 @@ Below is a list of available commands and their descriptions:
 
 - **`config`**
 
-  - Display current config settings for the mjartsaver bot.
+  - Display current config settings for the MjArtSaver bot.
   - Usage: `!config`
 
 - **`set_aws`**

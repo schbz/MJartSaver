@@ -56,8 +56,6 @@ class imageButton(Button):
                 os.makedirs(directory_path)
             
             s3_full_path = f"{filename}"
-            print(s3_full_path)
-            print(file_path)
             s3_client.download_file(s3_bucket, s3_full_path, file_path)
             with open(file_path, 'rb') as img:
                 await interaction.response.send_message(f"File Name: **{filename}**", file=discord.File(img, filename))

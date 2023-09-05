@@ -3,9 +3,9 @@
 ---
 
 <p align="center">
-  <a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.webp"><img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png" alt="Logo" width="140" height="140" style="border-radius: 50%;"></a>
+  <a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjasbotSnip.webp"><img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png" alt="Logo" width="140" height="140" style="border-radius: 50%;"></a>
 </p>
-A customizable Discord bot that streamlines the uploading of Midjourney generative AI images to secure AWS S3 buckets 
+A customizable Discord bot that streamlines the uploading of Midjourney AI images to secure AWS S3 buckets 
 <br>
 <br>
 <p align="center">
@@ -25,7 +25,7 @@ A customizable Discord bot that streamlines the uploading of Midjourney generati
 
 ---
 
-This bot is designed to interact with Midjourney generative AI users on Discord, allowing them to upload or download image files to/from their secure S3 buckets via async streaming. It also includes various commands for configuration and can respond to messages from the standard "Midjourney Bot."
+This bot is designed to interact with Midjourney AI users on Discord, allowing them to upload or download image files to/from their secure S3 buckets via async streaming. It also includes various commands for configuration and can respond to messages from the standard "Midjourney Bot."
 
 ## Table of Contents
 
@@ -52,12 +52,14 @@ This bot is designed to interact with Midjourney generative AI users on Discord,
   - [Contributing](#contributing)
   - [License](#license)
   - [Support](#support)
+  - [Sponsor](#sponsor)
 
 ## Usage Examples
 
 - Link your specified S3 bucket/path to other services like static web hosting or Cloudfront distributions to allow for streamlined collaborative updating of website media and more with the latest in generative art.
 - Use S3's low cost file storage tiers like 'Glacier' to automatically backup your generative art to an encrypted archive
 - Seamlessly transfer image files across multiple Discord servers
+- Modify the code slightly to facilitate automatic uploading of image attachments from other sorts of bots
 
 ## Features
 
@@ -302,3 +304,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 If you encounter any issues or have questions, please open an [issue on Github](https://github.com/schbz/mjartsaver/issues).
+
+## Sponsor
+
+[Some ways to encourage further development of this project](https://skylrs.com/fund)

@@ -113,7 +113,7 @@ Simply run the script in your shell:
 
 ```bash
 chmod +x setup.sh
-./setup.sh
+./scripts/setup.sh
 ```
 
 ##### Setup Script Features
@@ -170,7 +170,7 @@ Enable the necessary intents in the Discord Developer Portal, and set the approp
 ### Running the Bot Locally
 
 ```bash
-python bot.py
+python mjartsaver.py
 ```
 
 ### Inviting the Bot to Your Server
@@ -273,7 +273,7 @@ This shell script facilitates the cleanup process for an AWS-based environment, 
 
 ```bash
 chmod +x cleanup.sh
-./cleanup.sh
+./scripts/cleanup.sh
 ```
 
 #### Cleanup Script Features

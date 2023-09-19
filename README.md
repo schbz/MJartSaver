@@ -3,7 +3,7 @@
 ---
 
 <p align="center">
-  <a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjasbotSnip.webp"><img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.png" alt="Logo" width="140" height="140" style="border-radius: 50%;"></a>
+  <a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.webp"><img src="https://raw.githubusercontent.com/schbz/MJartSaver/main/assets/mjartsaverLogo.webp" alt="Logo" width="140" height="140" style="border-radius: 50%;"></a>
 </p>
 A customizable Discord bot that streamlines the uploading of Midjourney AI images to secure AWS S3 buckets 
 <br>
@@ -112,7 +112,6 @@ Simply run the script in your shell:
 1. Give the script execution permissions and run:
 
 ```bash
-chmod +x setup.sh
 ./scripts/setup.sh
 ```
 
@@ -172,6 +171,8 @@ Enable the necessary intents in the Discord Developer Portal, and set the approp
 ```bash
 python mjartsaver.py
 ```
+
+(or compile to an exe file for more portability with './scripts/compile.sh')
 
 ### Inviting the Bot to Your Server
 
@@ -272,7 +273,6 @@ This shell script facilitates the cleanup process for an AWS-based environment, 
 1. Give the script execution permissions and run:
 
 ```bash
-chmod +x cleanup.sh
 ./scripts/cleanup.sh
 ```
 

@@ -3,3 +3,6 @@ config.py
 /tmp/*
 .env
 config-log.txt
+/dist
+/build
+mjartsaver.spec
